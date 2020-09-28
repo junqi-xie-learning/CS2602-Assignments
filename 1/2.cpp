@@ -8,23 +8,20 @@ private:
     struct node
     {
         elemType data;
+        node *prev;
         node *next;
-        node(const elemType &x, node *p = nullptr)
-            : data{ x }, next{ p } { }
-        node()
-            : next{ nullptr } { }
+        node(const elemType &x, node *p = nullptr, node *n = nullptr)
+            : data{ x }, prev{ p }, next{ n } { }
         ~node() { }
     };
     node *head;
-    node *tail;
 
 public:
     linkList()
-        : head{ new node{ } }, tail{ head } { }
+        : head{ new node{ 0 } } { head->prev = head; head->next = head; }
     ~linkList() { clear(); delete head; }
 
     void insert(int i, const elemType &x);
-    void append(const elemType &x);
     void remove(int i);
 
     void clear();
@@ -34,55 +31,75 @@ public:
 template <class elemType>
 void linkList<elemType>::insert(int i, const elemType &x)
 {
-    node *p = head;
-    for (; i > 0; --i)
-        p = p->next;
+    if (i <= head->data / 2)
+    {
+        node *p = head;
+        for (; i > 0; --i)
+            p = p->next;
 
-    node *tmp = new node{ x, p->next };
-    p->next = tmp;
-    if (!tmp->next)
-        tail = tmp;
-}
+        node *tmp = new node{ x, p, p->next };
+        p->next = tmp;
+        tmp->next->prev = tmp;
+    }
+    else
+    {
+        node *p = head;
+        for (i = head->data - i; i > 0; --i)
+            p = p->prev;
 
-template <class elemType>
-void linkList<elemType>::append(const elemType &x)
-{
-    node *tmp = new node{ x };
-    tail->next = tmp;
-    tail = tmp;
+        node *tmp = new node{ x, p->prev, p };
+        p->prev = tmp;
+        tmp->prev->next = tmp;
+    }
+    ++head->data;
 }
 
 template <class elemType>
 void linkList<elemType>::remove(int i)
 {
-    node *p = head;
-    for (; i > 0; --i)
-        p = p->next;
+    if (i <= head->data / 2)
+    {
+        node *p = head;
+        for (; i > 0; --i)
+            p = p->next;
 
-    node *tmp = p->next;
-    p->next = tmp->next;
-    delete tmp;
-    if (!p->next)
-        tail = p;
+        node *tmp = p->next;
+        p->next = tmp->next;
+        p->next->prev = p;
+        delete tmp;
+    }
+    else
+    {
+        node *p = head;
+        for (i = head->data - i; i > 0; --i)
+            p = p->prev;
+
+        node *tmp = p->prev;
+        p->prev = tmp->prev;
+        p->prev->next = p;
+        delete tmp;
+    }
+    --head->data;
 }
 
 template <class elemType>
 void linkList<elemType>::clear()
 {
-    for (node *p = head->next; p; )
+    for (node *p = head->next; p != head; )
     {
         node *q = p->next;
         delete p;
         p = q;
     }
-    head->next = nullptr;
-    tail = head;
+    head->next = head;
+    head->prev = head;
+    head->data = 0;
 }
 
 template <class elemType>
 void linkList<elemType>::traverse() const
 {
-    for (node *p = head->next; p; p = p->next)
+    for (node *p = head->next; p != head; p = p->next)
         cout << p->data << ' ';
 }
 
@@ -96,7 +113,7 @@ int main()
     {
         int number = 0;
         cin >> number;
-        list.append(number);
+        list.insert(i, number);
     }
 
     for (int i = 0; i < m; ++i)
