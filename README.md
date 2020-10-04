@@ -3,7 +3,8 @@
 This repository contains the assignments handed out in Online Judge, CS221 (2020 Fall) with my solutions. 
 I downloaded the problems as a reference, but I do not claim the copyright of these problems.
 
-The problems are listed in [SJTU Online Judge](https://acm.sjtu.edu.cn/OnlineJudge/), and have all been accepted.
+The problems are listed in [SJTU Online Judge](https://acm.sjtu.edu.cn/OnlineJudge/), and have all been accepted.  
+Note: If some of the solutions get Time Limit Exceeded, please use `cstdio` to input / output instead of `iostream`.
 
 If you found any mistakes in the solutions, please create an issue or contact me through email.
 

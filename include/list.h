@@ -24,7 +24,7 @@ namespace cs221
     template <class T>
     class SeqList : public List<T>
     {
-    private:
+    protected:
         T *data;
         int current_length;
         int max_size;
@@ -106,7 +106,7 @@ namespace cs221
     template <class T>
     class LinkList : public List<T>
     {
-    private:
+    protected:
         struct Node
         {
             T data;
