@@ -1,4 +1,4 @@
-#include "../include/list.h"
+#include "../../include/list.h"
 using namespace std;
 using namespace cs221;
 
@@ -19,7 +19,7 @@ public:
 void Joseph::simulate()
 {
     for (int i = 0; i < size; ++i)
-        cycle.insert(i, i + 1);
+        cycle.append(i + 1);
     
     int current = 1;
     while (cycle.length() != 0)

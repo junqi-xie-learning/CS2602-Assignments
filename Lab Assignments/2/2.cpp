@@ -1,4 +1,4 @@
-#include "../include/stack.h"
+#include "../../include/stack.h"
 using namespace std;
 using namespace cs221;
 

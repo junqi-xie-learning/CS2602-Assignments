@@ -14,8 +14,11 @@ namespace cs221
         virtual void clear() = 0;
         virtual int length() const = 0;
         virtual void insert(int i, const T &x) = 0;
+        virtual void append(const T &x) = 0;
         virtual T remove(int i) = 0;
         virtual int search(const T &x) const = 0;
+        virtual const T &visit(int i) const = 0;
+        virtual T &visit(int i) = 0;
         virtual void traverse() const = 0;
         virtual ~List() { };
     };
@@ -24,7 +27,7 @@ namespace cs221
     template <class T>
     class SeqList : public List<T>
     {
-    protected:
+    private:
         T *data;
         int current_length;
         int max_size;
@@ -39,10 +42,12 @@ namespace cs221
 
         int length() const { return current_length; }
         void insert(int i, const T &x);
+        void append(const T &x) { insert(length(), x); }
         T remove(int i);
         int search(const T &x) const;
 
-        T visit(int i) const { return data[i]; }
+        const T &visit(int i) const { return data[i]; }
+        T &visit(int i) { return data[i]; }
         void traverse() const;
     };
 
@@ -106,7 +111,7 @@ namespace cs221
     template <class T>
     class LinkList : public List<T>
     {
-    protected:
+    private:
         struct Node
         {
             T data;
@@ -130,10 +135,12 @@ namespace cs221
 
         int length() const { return current_length; }
         void insert(int i, const T &x);
+        void append(const T &x) { insert(length(), x); }
         T remove(int i);
         int search(const T &x) const;
 
-        T visit(int i) const { return move(i)->data; }
+        const T &visit(int i) const { return move(i)->data; }
+        T &visit(int i) { return move(i)->data; }
         void traverse() const;
     };
 

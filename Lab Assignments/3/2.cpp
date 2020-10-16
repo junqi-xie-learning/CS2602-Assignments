@@ -1,5 +1,5 @@
-#include "../include/list.h"
-#include "../include/queue.h"
+#include "../../include/list.h"
+#include "../../include/queue.h"
 using namespace std;
 using namespace cs221;
 
@@ -31,8 +31,8 @@ void NaiveQueue::enqueue(int x, int id)
         queues.visit(index)->enqueue(x);
     else
     {
-        ids.insert(ids.length(), id);
-        queues.insert(queues.length(), new SeqQueue<int>{ } );
+        ids.append(id);
+        queues.append(new SeqQueue<int>{ } );
         queues.visit(queues.length() - 1)->enqueue(x);
     }
 }
