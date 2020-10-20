@@ -22,7 +22,7 @@ namespace cs221
     template <class T>
     class SeqQueue : public Queue<T>
     {
-    private:
+    protected:
         T *elem;
         int max_size;
         int front, rear;
@@ -82,7 +82,7 @@ namespace cs221
     template <class T>
     class LinkQueue : public Queue<T>
     {
-    private:
+    protected:
         struct Node
         {
             T data;

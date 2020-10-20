@@ -22,7 +22,7 @@ namespace cs221
     template <class T>
     class SeqStack : public Stack<T>
     {
-    private:
+    protected:
         T *elem;
         int top_p;
         int max_size;
@@ -80,7 +80,7 @@ namespace cs221
     template <class T>
     class LinkStack : public Stack<T>
     {
-    private:
+    protected:
         struct Node
         {
             T data;
