@@ -16,7 +16,7 @@ namespace cs221
         virtual void insert(int i, const T &x) = 0;
         virtual void append(const T &x) = 0;
         virtual T remove(int i) = 0;
-        virtual int search(const T &x) const = 0;
+        virtual int find(const T &x) const = 0;
         virtual const T &visit(int i) const = 0;
         virtual T &visit(int i) = 0;
         virtual void traverse() const = 0;
@@ -28,45 +28,45 @@ namespace cs221
     class SeqList : public List<T>
     {
     protected:
-        T *data;
+        T *elem;
         int current_length;
         int max_size;
         void double_space();
 
     public:
         SeqList(int init_size = 10)
-            : data{ new T[init_size] }, max_size{ init_size }, current_length{ 0 } { };
+            : elem{ new T[init_size] }, max_size{ init_size }, current_length{ 0 } { };
         SeqList(const SeqList &other);
-        ~SeqList() { delete[] data; }
+        ~SeqList() { delete[] elem; }
         void clear() { current_length = 0; }
 
         int length() const { return current_length; }
         void insert(int i, const T &x);
-        void append(const T &x) { insert(length(), x); }
+        void append(const T &x);
         T remove(int i);
-        int search(const T &x) const;
+        int find(const T &x) const;
 
-        const T &visit(int i) const { return data[i]; }
-        T &visit(int i) { return data[i]; }
+        const T &visit(int i) const { return elem[i]; }
+        T &visit(int i) { return elem[i]; }
         void traverse() const;
     };
 
     template <class T>
     SeqList<T>::SeqList(const SeqList &other)
-        : data{ new T[other.max_size] }, max_size{ other.max_size }, current_length{ other.current_length }
+        : elem{ new T[other.max_size] }, max_size{ other.max_size }, current_length{ other.current_length }
     {
         for (int i = 0; i < current_length; ++i)
-            data[i] = other.data[i];
+            elem[i] = other.elem[i];
     }
 
     template <class T>
     void SeqList<T>::double_space()
     {
-        T *tmp = data;
+        T *tmp = elem;
         max_size *= 2;
-        data = new T[max_size];
+        elem = new T[max_size];
         for (int i = 0; i < current_length; ++i)
-            data[i] = tmp[i];
+            elem[i] = tmp[i];
         delete[] tmp;
     }
 
@@ -76,26 +76,26 @@ namespace cs221
         if (current_length == max_size)
             double_space();
         for (int j = current_length; j > i; --j)
-            data[j] = data[j - 1];
-        data[i] = x;
+            elem[j] = elem[j - 1];
+        elem[i] = x;
         ++current_length;
     }
 
     template <class T>
     T SeqList<T>::remove(int i)
     {
-        T x = data[i];
+        T x = elem[i];
         for (int j = i; j < current_length - 1; ++j)
-            data[j] = data[j + 1];
+            elem[j] = elem[j + 1];
         --current_length;
         return x;
     }
 
     template <class T>
-    int SeqList<T>::search(const T &x) const
+    int SeqList<T>::find(const T &x) const
     {
         for (int i = 0; i < current_length; ++i)
-            if (data[i] == x)
+            if (elem[i] == x)
                 return i;
         return -1;
     }
@@ -104,7 +104,7 @@ namespace cs221
     void SeqList<T>::traverse() const
     {
         for (int i = 0; i < current_length; ++i)
-            std::cout << data[i] << ' ';
+            std::cout << elem[i] << ' ';
     }
 
 
@@ -123,6 +123,7 @@ namespace cs221
         };
 
         Node *head;
+        Node *tail;
         int current_length;
         Node *move(int i) const;
 
@@ -137,7 +138,7 @@ namespace cs221
         void insert(int i, const T &x);
         void append(const T &x) { insert(length(), x); }
         T remove(int i);
-        int search(const T &x) const;
+        int find(const T &x) const;
 
         const T &visit(int i) const { return move(i)->data; }
         T &visit(int i) { return move(i)->data; }
@@ -186,6 +187,15 @@ namespace cs221
         Node *pos = move(i - 1);
         pos->next = new Node{ x, pos->next };
         ++current_length;
+        if (pos == tail)
+            tail = tail->next;
+    }
+
+    template <class T>
+    void LinkList<T>::append(const T &x)
+    {
+        tail->next = new Node{ x };
+        tail = tail->next;
     }
 
     template <class T>
@@ -198,11 +208,13 @@ namespace cs221
         pos->next = delp->next;
         delete delp;
         --current_length;
+        if (!pos->next)
+            tail = pos;
         return x;
     }
 
     template <class T>
-    int LinkList<T>::search(const T &x) const
+    int LinkList<T>::find(const T &x) const
     {
         int i = 0;
         for (Node *p = head->next; p; p = p->next)

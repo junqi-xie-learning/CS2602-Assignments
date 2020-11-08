@@ -1,4 +1,4 @@
-#include "../../include/binary_tree.h"
+#include "../../include/tree.h"
 #include <cstring>
 using namespace std;
 using namespace cs221;

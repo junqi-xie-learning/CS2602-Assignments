@@ -1,12 +1,19 @@
-#include <iostream>
 #include "stack.h"
 #include "queue.h"
+
+// tree.h:
+//
+// Class: BinaryTree, Tree
 
 namespace cs221
 {
     template <class T>
+    class Tree;
+
+    template <class T>
     class BinaryTree
     {
+        friend class Tree<T>;
     protected:
         struct Node
         {
@@ -32,6 +39,7 @@ namespace cs221
             : root{ nullptr } { }
 
         ~BinaryTree() { clear(); }
+        void create_tree(const T &flag);
         void clear() { clear(root); }
 
         bool is_empty() const { return root == nullptr; }
@@ -59,6 +67,33 @@ namespace cs221
             return tmp;
         else
             return find(x, t->right);
+    }
+
+    template <class T>
+    void BinaryTree<T>::create_tree(const T &flag)
+    {
+        LinkQueue<Node *> q;
+        T x;
+        std::cin >> x;
+        root = new Node{ x };
+        q.enqueue(root);
+
+        while (!q.is_empty())
+        {
+            Node *tmp = q.dequeue();
+            T left_data, right_data;
+            std::cin >> left_data >> right_data;
+            if (left_data != flag)
+            {
+                tmp->left = new Node{left_data};
+                q.enqueue(tmp->left);
+            }
+            if (right_data != flag)
+            {
+                tmp->right = new Node{right_data};
+                q.enqueue(tmp->right);
+            }
+        }
     }
 
     template <class T>
@@ -205,6 +240,52 @@ namespace cs221
             case 2:
                 std::cout << tmp->data << ' ';
                 break;
+            }
+        }
+    }
+
+
+    template <class T>
+    class Tree
+    {
+    protected:
+        BinaryTree<T> rep;
+    
+    public:
+        Tree()
+            : rep{ } { }
+        
+        void create_tree(const T &flag);
+
+        void preorder() const { rep.preorder(); }
+        void postorder() const { rep.midorder(); }
+    };
+
+    template <class T>
+    void Tree<T>::create_tree(const T &flag)
+    {
+        LinkQueue<typename BinaryTree<T>::Node *> q;
+        T x;
+        std::cin >> x;
+        rep.root = new typename BinaryTree<T>::Node{ x };
+        q.enqueue(rep.root);
+
+        while (!q.is_empty())
+        {
+            typename BinaryTree<T>::Node *tmp = q.dequeue();
+            bool first = true;
+            while (std::cin >> x && x != flag)
+            {
+                typename BinaryTree<T>::Node *next_node = new typename BinaryTree<T>::Node{ x };
+                if (first)
+                {
+                    tmp->left = next_node;
+                    first = false;
+                }
+                else
+                    tmp->right = next_node;
+                q.enqueue(next_node);
+                tmp = next_node;
             }
         }
     }
