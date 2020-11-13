@@ -25,6 +25,7 @@ namespace cs221
         ~PriorityQueue() { delete[] elem; };
 
         bool is_empty() const { return current_length == 0; };
+        int length() const { return current_length; }
         void enqueue(const T &x);
         T dequeue();
         T get_head() const { return elem[1]; };
