@@ -13,6 +13,7 @@ namespace cs221
 
         Pair(Key k, Value v = Value{ })
             : key{ k }, value{ v } { }
+        operator Key() const { return key; }
     };
 
     template <class Key, class Value>

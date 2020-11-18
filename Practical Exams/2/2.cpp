@@ -1,4 +1,4 @@
-#include "../../include/bst.h"
+#include "../../include/binary_search_tree.h"
 using namespace std;
 using namespace cs221;
 

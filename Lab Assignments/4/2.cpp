@@ -1,90 +1,91 @@
-#include "../../include/tree.h"
 #include "../../include/list.h"
-#include <cstring>
+#include "../../include/queue.h"
 using namespace std;
 using namespace cs221;
 
 
-template <class T>
-class CompleteBinaryTree : public BinaryTree<T>
+class NaiveQueue
 {
+private:
+    SeqList<SeqQueue<int> *> queues;
+    SeqList<int> ids;
+
 public:
-    void build_tree(T elem[], int length);
-    bool is_complete() const;
+    ~NaiveQueue();
+
+    bool is_empty() const { return queues.length() == 0; }
+    void enqueue(int x, int id);
+    int dequeue();
 };
 
-template <class T>
-void CompleteBinaryTree<T>::build_tree(T elem[], int length)
+NaiveQueue::~NaiveQueue()
 {
-    SeqList<typename BinaryTree<T>::Node *> nodes{ length };
-    nodes.append(new typename BinaryTree<T>::Node{ });
-    this->root = nodes.visit(0);
+    for (int i = 0; i < queues.length(); ++i)
+        delete queues.visit(i);
+}
 
-    for (int i = 1; i < length; ++i)
+void NaiveQueue::enqueue(int x, int id)
+{
+    int index = ids.search(id);
+    if (index != -1)
+        queues.visit(index)->enqueue(x);
+    else
     {
-        nodes.append(new typename BinaryTree<T>::Node{ });
-        int p = elem[i];
-        if (!nodes.visit(p)->left)
-            nodes.visit(p)->left = nodes.visit(i);
-        else
-            nodes.visit(p)->right = nodes.visit(i);
+        ids.append(id);
+        queues.append(new SeqQueue<int>{ } );
+        queues.visit(queues.length() - 1)->enqueue(x);
     }
 }
 
-template <class T>
-bool CompleteBinaryTree<T>::is_complete() const
+int NaiveQueue::dequeue()
 {
-    if (!this->root)
-        return true;
-    
-    LinkQueue<typename BinaryTree<T>::Node *> q;
-
-    // Label
-    int index = 1;
-    q.enqueue(this->root);
-    while (!q.is_empty())
+    int x = queues.visit(0)->dequeue();
+    if (queues.visit(0)->is_empty())
     {
-        typename BinaryTree<T>::Node *tmp = q.dequeue();
-        tmp->data = index;
-        ++index;
-        if (tmp->left)
-            q.enqueue(tmp->left);
-        if (tmp->right)
-            q.enqueue(tmp->right);
+        ids.remove(0);
+        delete queues.visit(0);
+        queues.remove(0);
     }
-
-    // Check
-    q.enqueue(this->root);
-    while (!q.is_empty())
-    {
-        typename BinaryTree<T>::Node *tmp = q.dequeue();
-        if (tmp->left)
-        {
-            if (tmp->left->data != 2 * tmp->data)
-                return false;
-            q.enqueue(tmp->left);
-        }
-        if (tmp->right)
-        {
-            if (tmp->right->data != 2 * tmp->data + 1)
-                return false;
-            q.enqueue(tmp->right);
-        }
-    }
-    return true;
+    return x;
 }
 
 
 int main()
 {
-    int length = 0;
-    cin >> length;
+    int n = 0;
+    cin >> n;
 
-    int elem[length] = { };
-    for (int i = 1; i < length; ++i)
-        cin >> elem[i];
-    
-    CompleteBinaryTree<int> tree;
-    tree.build_tree(elem, length);
-    cout << (tree.is_complete() ? "true" : "false") << endl;
+    SeqQueue<int> ids{ n + 1 };
+    for (int i = 0; i < n; ++i)
+    {
+        int id = 0;
+        cin >> id;
+        ids.enqueue(id);
+    }
+
+    NaiveQueue nq;
+    int q = 0, no = 1;
+    cin >> q;
+    for (int i = 0; i < q; ++i)
+    {
+        int op = 0;
+        cin >> op;
+        switch (op)
+        {
+        case 0:
+            if (!ids.is_empty())
+            {
+                nq.enqueue(no, ids.dequeue());
+                ++no;
+            }
+            break;
+        case 1:
+            if (!nq.is_empty())
+                cout << nq.dequeue() << endl;
+            else
+                cout << -1 << endl;
+            break;
+        }
+    }
+    return 0;
 }

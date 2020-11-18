@@ -42,7 +42,7 @@ namespace cs221
 
         int length() const { return current_length; }
         void insert(int i, const T &x);
-        void append(const T &x);
+        void append(const T &x) { insert(length(), x); }
         T remove(int i);
         int find(const T &x) const;
 
@@ -136,7 +136,7 @@ namespace cs221
 
         int length() const { return current_length; }
         void insert(int i, const T &x);
-        void append(const T &x) { insert(length(), x); }
+        void append(const T &x);
         T remove(int i);
         int find(const T &x) const;
 

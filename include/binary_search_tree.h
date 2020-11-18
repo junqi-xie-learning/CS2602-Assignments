@@ -1,9 +1,9 @@
 #include "tree.h"
 
-// bst.h:
+// binary_search_tree.h:
 //
 // Base Class: BinaryTree (in "tree.h")
-// Derived Class: BinarySearchTree
+// Derived Class: BinarySearchTree, AVLTree
 
 namespace cs221
 {

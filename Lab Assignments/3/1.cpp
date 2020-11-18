@@ -1,60 +1,82 @@
-#include "../../include/list.h"
+#include "../../include/stack.h"
 using namespace std;
 using namespace cs221;
 
-struct Person
-{
-    int number;
-    int urgency;
-};
-
-ostream &operator<<(ostream &os, const Person &p)
-{
-    return os << p.number;
-}
-
-bool operator==(const Person &p1, const Person &p2)
-{
-    return p1.number == p2.number && p1.urgency == p2.urgency;
-}
-
-class TicketQueue
+class ParenStack
 {
 private:
-    SeqList<Person> queue;
+    SeqStack<char> s;
+
+    bool left(char ch) const { return ch == '(' || ch == '[' || ch == '{'; }
+    bool right(char ch) const { return ch == ')' || ch == ']' || ch == '}'; }
+    bool match(char left, char right) const
+        { return left == '(' && right == ')' || left == '[' && right == ']' || left == '{' && right == '}'; }
 
 public:
-    TicketQueue(int init_size)
-        : queue{ init_size } { }
-    void enqueue(const Person &x, int attempts);
-    void traverse() { queue.traverse(); }
+    ParenStack(int n)
+        : s{ n } { }
+
+    bool is_empty() const { return s.is_empty(); }
+    bool is_matched() const;
+    char top() const { return s.top(); }
+    char pop() { return s.pop(); }
+    void push(char x) { s.push(x); }
 };
 
-void TicketQueue::enqueue(const Person &x, int attempts)
+bool ParenStack::is_matched() const
 {
-    queue.append(x);
-    int index = queue.length() - 1;
-    while (index > 0 && queue.visit(index - 1).urgency < x.urgency && attempts > 0)
+    SeqStack<char> backup = s;
+    LinkStack<char> tmp;
+
+    bool result = true;
+    while (!backup.is_empty())
     {
-        swap(queue.visit(index - 1), queue.visit(index));
-        --index;
-        --attempts;
+        char ch = backup.pop();
+        if (right(ch))
+            tmp.push(ch);
+        else if (!tmp.is_empty() && match(ch, tmp.top()))
+            tmp.pop();
+        else
+        {
+            result = false;
+            break;
+        }
     }
+    return result && tmp.is_empty();
 }
 
 
 int main()
-{
+{    
     int n = 0;
     cin >> n;
 
-    TicketQueue tq{ n };
-    for (int i = 1; i <= n; ++i)
+    ParenStack ps{ n };
+
+    for (int i = 0; i < n; ++i)
     {
-        int a = 0, c = 0;
-        cin >> a >> c;
-        tq.enqueue(Person{ i, a }, c);
+        int op = 0;
+        cin >> op;
+ 
+        char ch = 0;
+        switch (op)
+        {
+        case 1:
+            cin >> ch;
+            ps.push(ch);
+            break;
+        case 2:
+            if (!ps.is_empty())
+                ps.pop();
+            break;
+        case 3:
+            if (!ps.is_empty())
+                cout << ps.top() << endl;
+            break;
+        case 4:
+            cout << (ps.is_matched() ? "YES" : "NO") << endl;
+            break;
+        }
     }
-    tq.traverse();
     return 0;
 }

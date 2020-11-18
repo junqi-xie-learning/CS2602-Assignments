@@ -1,74 +1,60 @@
-#include "../../include/tree.h"
-#include <cstring>
+#include "../../include/list.h"
 using namespace std;
 using namespace cs221;
 
-
-template <class T>
-class PreMidBinaryTree : public BinaryTree<T>
+struct Person
 {
-protected:
-    typename BinaryTree<T>::Node *build_tree(T pre[], int pl, int pr, T mid[], int ml, int mr);
-
-public:
-    void build_tree(T pre[], int plen, T mid[], int mlen) { build_tree(pre, 0, plen - 1, mid, 0, mlen - 1); }
-    void level_order(int count) const;
+    int number;
+    int urgency;
 };
 
-template <class T>
-typename BinaryTree<T>::Node *PreMidBinaryTree<T>::build_tree(T pre[], int pl, int pr, T mid[], int ml, int mr)
+ostream &operator<<(ostream &os, const Person &p)
 {
-    if (pl > pr)
-        return nullptr;
-    
-    typename BinaryTree<T>::Node *p = new typename BinaryTree<T>::Node{ pre[pl] };
-    if (!this->root)
-        this->root = p;
-    int pos = ml;
-    while (mid[pos] != pre[pl])
-        ++pos;
-    int num = pos - ml;
-
-    p->left = build_tree(pre, pl + 1, pl + num, mid, ml, pos - 1);
-    p->right = build_tree(pre, pl + num + 1, pr, mid, pos + 1, mr);
-    return p;
+    return os << p.number;
 }
 
-template <class T>
-void PreMidBinaryTree<T>::level_order(int count) const
+bool operator==(const Person &p1, const Person &p2)
 {
-    LinkQueue<typename BinaryTree<T>::Node *> q;
-    q.enqueue(this->root);
+    return p1.number == p2.number && p1.urgency == p2.urgency;
+}
 
-    while (!q.is_empty())
+class TicketQueue
+{
+private:
+    SeqList<Person> queue;
+
+public:
+    TicketQueue(int init_size)
+        : queue{ init_size } { }
+    void enqueue(const Person &x, int attempts);
+    void traverse() { queue.traverse(); }
+};
+
+void TicketQueue::enqueue(const Person &x, int attempts)
+{
+    queue.append(x);
+    int index = queue.length() - 1;
+    while (index > 0 && queue.visit(index - 1).urgency < x.urgency && attempts > 0)
     {
-        typename BinaryTree<T>::Node *tmp = q.dequeue();
-        if (tmp)
-        {
-            cout << tmp->data << ' ';
-            --count;
-            q.enqueue(tmp->left);
-            q.enqueue(tmp->right);
-        }
-        else
-        {
-            cout << "NULL ";
-            q.enqueue(nullptr);
-            q.enqueue(nullptr);
-        }
-        if (count == 0)
-            return;
+        swap(queue.visit(index - 1), queue.visit(index));
+        --index;
+        --attempts;
     }
 }
 
 
 int main()
 {
-    char pre[27], mid[27];
-    cin >> pre >> mid;
+    int n = 0;
+    cin >> n;
 
-    PreMidBinaryTree<char> tree;
-    tree.build_tree(pre, strlen(pre), mid, strlen(mid));
-    tree.level_order(strlen(pre));
+    TicketQueue tq{ n };
+    for (int i = 1; i <= n; ++i)
+    {
+        int a = 0, c = 0;
+        cin >> a >> c;
+        tq.enqueue(Person{ i, a }, c);
+    }
+    tq.traverse();
     return 0;
 }

@@ -1,82 +1,42 @@
-#include "../../include/stack.h"
+#include "../../include/list.h"
 using namespace std;
 using namespace cs221;
 
-class ParenStack
+class Joseph
 {
 private:
-    SeqStack<char> s;
-
-    bool left(char ch) const { return ch == '(' || ch == '[' || ch == '{'; }
-    bool right(char ch) const { return ch == ')' || ch == ']' || ch == '}'; }
-    bool match(char left, char right) const
-        { return left == '(' && right == ')' || left == '[' && right == ']' || left == '{' && right == '}'; }
+    SeqList<int> cycle;
+    int size;
+    int gap;
 
 public:
-    ParenStack(int n)
-        : s{ n } { }
-
-    bool is_empty() const { return s.is_empty(); }
-    bool is_matched() const;
-    char top() const { return s.top(); }
-    char pop() { return s.pop(); }
-    void push(char x) { s.push(x); }
+    Joseph(int n, int m)
+        :cycle{ n }, size{ n }, gap{ m } { }
+    
+    void simulate();
 };
 
-bool ParenStack::is_matched() const
+void Joseph::simulate()
 {
-    SeqStack<char> backup = s;
-    LinkStack<char> tmp;
-
-    bool result = true;
-    while (!backup.is_empty())
+    for (int i = 0; i < size; ++i)
+        cycle.append(i + 1);
+    
+    int current = 1;
+    while (cycle.length() != 0)
     {
-        char ch = backup.pop();
-        if (right(ch))
-            tmp.push(ch);
-        else if (!tmp.is_empty() && match(ch, tmp.top()))
-            tmp.pop();
-        else
-        {
-            result = false;
-            break;
-        }
+        current = (current + gap - 1) % cycle.length();
+        cout << cycle.remove(current) << ' ';
     }
-    return result && tmp.is_empty();
 }
 
 
 int main()
-{    
-    int n = 0;
-    cin >> n;
+{
+    int n = 0, m = 0;
+    cin >> n >> m;
 
-    ParenStack ps{ n };
+    Joseph obj(n, m);
+    obj.simulate();
 
-    for (int i = 0; i < n; ++i)
-    {
-        int op = 0;
-        cin >> op;
- 
-        char ch = 0;
-        switch (op)
-        {
-        case 1:
-            cin >> ch;
-            ps.push(ch);
-            break;
-        case 2:
-            if (!ps.is_empty())
-                ps.pop();
-            break;
-        case 3:
-            if (!ps.is_empty())
-                cout << ps.top() << endl;
-            break;
-        case 4:
-            cout << (ps.is_matched() ? "YES" : "NO") << endl;
-            break;
-        }
-    }
     return 0;
 }

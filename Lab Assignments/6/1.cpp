@@ -1,41 +1,74 @@
-#include "../../include/list.h"
+#include "../../include/tree.h"
+#include <cstring>
 using namespace std;
 using namespace cs221;
 
-int binary_search(const SeqList<int> &array, int x)
+
+template <class T>
+class PreMidBinaryTree : public BinaryTree<T>
 {
-    if (x > array.visit(array.length() - 1))
-        return -1;
-        
-    int low = 0, high = array.length() - 1;
-    while (low < high)
-    {
-        int mid = (low + high) / 2;
-        if (array.visit(mid) < x)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-    return array.visit(low);
+protected:
+    typename BinaryTree<T>::Node *build_tree(T pre[], int pl, int pr, T mid[], int ml, int mr);
+
+public:
+    void build_tree(T pre[], int plen, T mid[], int mlen) { build_tree(pre, 0, plen - 1, mid, 0, mlen - 1); }
+    void level_order(int count) const;
+};
+
+template <class T>
+typename BinaryTree<T>::Node *PreMidBinaryTree<T>::build_tree(T pre[], int pl, int pr, T mid[], int ml, int mr)
+{
+    if (pl > pr)
+        return nullptr;
+    
+    typename BinaryTree<T>::Node *p = new typename BinaryTree<T>::Node{ pre[pl] };
+    if (!this->root)
+        this->root = p;
+    int pos = ml;
+    while (mid[pos] != pre[pl])
+        ++pos;
+    int num = pos - ml;
+
+    p->left = build_tree(pre, pl + 1, pl + num, mid, ml, pos - 1);
+    p->right = build_tree(pre, pl + num + 1, pr, mid, pos + 1, mr);
+    return p;
 }
+
+template <class T>
+void PreMidBinaryTree<T>::level_order(int count) const
+{
+    LinkQueue<typename BinaryTree<T>::Node *> q;
+    q.enqueue(this->root);
+
+    while (!q.is_empty())
+    {
+        typename BinaryTree<T>::Node *tmp = q.dequeue();
+        if (tmp)
+        {
+            cout << tmp->data << ' ';
+            --count;
+            q.enqueue(tmp->left);
+            q.enqueue(tmp->right);
+        }
+        else
+        {
+            cout << "NULL ";
+            q.enqueue(nullptr);
+            q.enqueue(nullptr);
+        }
+        if (count == 0)
+            return;
+    }
+}
+
 
 int main()
 {
-    int n = 0, m = 0;
-    cin >> n >> m;
+    char pre[27], mid[27];
+    cin >> pre >> mid;
 
-    SeqList<int> array{ n };
-    for (int i = 0; i < n; ++i)
-    {
-        int a = 0;
-        cin >> a;
-        array.append(a);
-    }
-    
-    for (int i = 0; i < m; ++i)
-    {
-        int b = 0;
-        cin >> b;
-        cout << binary_search(array, b) << endl;
-    }
+    PreMidBinaryTree<char> tree;
+    tree.build_tree(pre, strlen(pre), mid, strlen(mid));
+    tree.level_order(strlen(pre));
+    return 0;
 }
