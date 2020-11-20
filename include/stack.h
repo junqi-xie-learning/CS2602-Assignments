@@ -1,3 +1,6 @@
+#ifndef STACK
+#define STACK
+
 #include <iostream>
 
 // stack.h:
@@ -145,3 +148,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif

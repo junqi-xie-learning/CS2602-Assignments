@@ -1,3 +1,6 @@
+#ifndef QUEUE
+#define QUEUE
+
 #include <iostream>
 
 // queue.h:
@@ -161,3 +164,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif

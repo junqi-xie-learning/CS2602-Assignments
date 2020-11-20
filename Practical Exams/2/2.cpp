@@ -40,4 +40,5 @@ int main()
     int u = 0, v = 0;
     cin >> u >> v;
     cout << *bst.LCA(u, v);
+    return 0;
 }

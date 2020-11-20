@@ -1,3 +1,6 @@
+#ifndef LIST
+#define LIST
+
 #include <iostream>
 
 // list.h:
@@ -234,3 +237,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif

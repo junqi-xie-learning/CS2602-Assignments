@@ -1,3 +1,6 @@
+#ifndef BINARY_SEARCH_TREE
+#define BINARY_SEARCH_TREE
+
 #include "tree.h"
 
 // binary_search_tree.h:
@@ -10,9 +13,9 @@ namespace cs221
     template <class T>
     class BinarySearchTree : public BinaryTree<T>
     {
-    private:
+    protected:
         void insert(const T &x, typename BinaryTree<T>::Node *&t);
-        void remove(const T &x, typename BinaryTree<T>::Node *&t);
+        void remove(const T &x, typename BinaryTree<T>::Node *&t, bool replace_right = true);
         T *find(const T &x, typename BinaryTree<T>::Node *t) const;
         void makeEmpty(typename BinaryTree<T>::Node *t);
 
@@ -48,28 +51,36 @@ namespace cs221
     }
 
     template <class T>
-    void BinarySearchTree<T>::remove(const T &x, typename BinaryTree<T>::Node *&t)
+    void BinarySearchTree<T>::remove(const T &x, typename BinaryTree<T>::Node *&t, bool replace_right)
     {
         if (!t)
             return;
         if (x < t->data)
-            remove(x, t->left);
+            remove(x, t->left, replace_right);
         else if (t->data < x)
-            remove(x, t->right);
-        else if (!t->left || !t->right)
+            remove(x, t->right, replace_right);
+        else if (!t->right && replace_right)
         {
             typename BinaryTree<T>::Node *tmp = t;
-            t = (t->left != nullptr) ? t->left : t->right;
+            t = t->left;
+            delete tmp;
+        }
+        else if (!t->left && !replace_right)
+        {
+            typename BinaryTree<T>::Node *tmp = t;
+            t = t->right;
             delete tmp;
         }
         else
         {
             typename BinaryTree<T>::Node *tmp = t->right;
-            while (tmp->left != nullptr)
+            while (tmp->left)
                 tmp = tmp->left;
             t->data = tmp->data;
-            remove(t->data, t->right);
+            remove(t->data, t->right, false);
         }
     }
 
 } // namespace cs221
+
+#endif

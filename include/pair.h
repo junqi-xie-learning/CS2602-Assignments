@@ -1,3 +1,6 @@
+#ifndef PAIR
+#define PAIR
+
 // pair.h:
 //
 // Class: Pair
@@ -53,3 +56,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif

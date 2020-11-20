@@ -1,3 +1,6 @@
+#ifndef PRIORITY_QUEUE
+#define PRIORITY_QUEUE
+
 #include "queue.h"
 
 // priority_queue.h:
@@ -108,3 +111,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef TREE
+#define TREE
+
 #include "stack.h"
 #include "queue.h"
 
@@ -291,3 +294,5 @@ namespace cs221
     }
 
 } // namespace cs221
+
+#endif
