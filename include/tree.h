@@ -58,7 +58,7 @@ namespace cs221
     };
 
     template <class T>
-    typename BinaryTree<T>::Node *BinaryTree<T>::find(BinaryTree<T>::Node *t, const T &x) const
+    Node *BinaryTree<T>::find(Node *t, const T &x) const
     {
         if (t == nullptr)
             return nullptr;
@@ -88,19 +88,19 @@ namespace cs221
             std::cin >> left_data >> right_data;
             if (left_data != flag)
             {
-                tmp->left = new Node{left_data};
+                tmp->left = new Node{ left_data };
                 q.enqueue(tmp->left);
             }
             if (right_data != flag)
             {
-                tmp->right = new Node{right_data};
+                tmp->right = new Node{ right_data };
                 q.enqueue(tmp->right);
             }
         }
     }
 
     template <class T>
-    void BinaryTree<T>::clear(BinaryTree<T>::Node *&t)
+    void BinaryTree<T>::clear(Node *&t)
     {
         if (t == nullptr)
             return;
@@ -112,7 +112,7 @@ namespace cs221
     }
 
     template <class T>
-    void BinaryTree<T>::preorder(BinaryTree<T>::Node *t) const
+    void BinaryTree<T>::preorder(Node *t) const
     {
         if (t == nullptr)
             return;
@@ -122,7 +122,7 @@ namespace cs221
     }
 
     template <class T>
-    void BinaryTree<T>::midorder(BinaryTree<T>::Node *t) const
+    void BinaryTree<T>::midorder(Node *t) const
     {
         if (t == nullptr)
             return;
@@ -132,7 +132,7 @@ namespace cs221
     }
 
     template <class T>
-    void BinaryTree<T>::postorder(BinaryTree<T>::Node *t) const
+    void BinaryTree<T>::postorder(Node *t) const
     {
         if (t == nullptr)
             return;

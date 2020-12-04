@@ -6,7 +6,7 @@
 // binary_search_tree.h:
 //
 // Base Class: BinaryTree (in "tree.h")
-// Derived Class: BinarySearchTree, AVLTree
+// Derived Class: BinarySearchTree
 
 namespace cs221
 {
@@ -28,10 +28,10 @@ namespace cs221
     template <class T>
     T *BinarySearchTree<T>::find(const T &x, typename BinaryTree<T>::Node *t) const
     {
-        if (t == nullptr)
+        if (!t)
             return nullptr;
 
-        if (t->data == x)
+        if (x == t->data)
             return &(t->data);
         else if (x < t->data)
             return find(x, t->left);
