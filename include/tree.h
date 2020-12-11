@@ -58,7 +58,7 @@ namespace cs221
     };
 
     template <class T>
-    Node *BinaryTree<T>::find(Node *t, const T &x) const
+    typename BinaryTree<T>::Node *BinaryTree<T>::find(Node *t, const T &x) const
     {
         if (t == nullptr)
             return nullptr;

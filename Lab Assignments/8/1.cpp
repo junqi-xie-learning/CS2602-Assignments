@@ -38,4 +38,5 @@ int main()
         cin >> b;
         cout << binary_search(list, b) << endl;
     }
+    return 0;
 }

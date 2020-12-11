@@ -11,11 +11,18 @@ private:
 
 public:
     GirlQueue(int charms[], int size);
+    ~GirlQueue();
 
     void merge(int a, int b);
     void enqueue(int a, int b);
     int dequeue(int a);
 };
+
+GirlQueue::~GirlQueue()
+{
+    for (int i = 0; i < queues.length(); ++i)
+        delete queues.visit(i);
+}
 
 GirlQueue::GirlQueue(int charms[], int size)
     : queues{ size }

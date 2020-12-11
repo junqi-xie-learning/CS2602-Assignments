@@ -26,7 +26,7 @@ NaiveQueue::~NaiveQueue()
 
 void NaiveQueue::enqueue(int x, int id)
 {
-    int index = ids.search(id);
+    int index = ids.find(id);
     if (index != -1)
         queues.visit(index)->enqueue(x);
     else

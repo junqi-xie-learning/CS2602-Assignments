@@ -87,4 +87,5 @@ int main()
     CompleteBinaryTree<int> tree;
     tree.build_tree(elem, length);
     cout << (tree.is_complete() ? "true" : "false") << endl;
+    return 0;
 }
