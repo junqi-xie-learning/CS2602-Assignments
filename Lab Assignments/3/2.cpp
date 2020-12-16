@@ -4,11 +4,11 @@ using namespace cs221;
 
 int main()
 {
-    int N = 0;
-    cin >> N;
-    SeqStack<int> s{ N };
+    int n = 0;
+    cin >> n;
+    SeqStack<int> s{ n };
 
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < n; ++i)
     {
         int op = 0, num = 0;
         cin >> op >> num;

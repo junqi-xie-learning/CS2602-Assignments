@@ -33,11 +33,11 @@ ostream &operator<<(ostream &os, const Rational &r)
 
 int main()
 {
-    int N = 0;
-    cin >> N;
+    int n = 0;
+    cin >> n;
 
     AVLTree<Rational> tree;
-    for (int i = 1; i <= N; ++i)
+    for (int i = 1; i <= n; ++i)
         for (int j = 0; j <= i; ++j)
             tree.insert(Rational{ j, i });
 
