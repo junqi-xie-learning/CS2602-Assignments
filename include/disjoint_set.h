@@ -53,6 +53,7 @@ namespace cs221
         parent[x] = find(parent[x]);
         return parent[x];
     }
+
 } // namespace cs221
 
 #endif

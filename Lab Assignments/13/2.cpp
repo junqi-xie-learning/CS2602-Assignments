@@ -52,7 +52,7 @@ int main()
     {
         int begin = 0, end = 0;
         cin >> begin >> end;
-        graph.insert(begin, end);
+        graph.insert(begin, end, 1);
     }
 
     for (int i = 0; i < n; ++i)

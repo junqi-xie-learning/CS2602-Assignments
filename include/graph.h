@@ -1,11 +1,16 @@
 #ifndef GRAPH
 #define GRAPH
 
+#include "list.h"
 #include "queue.h"
+#include "priority_queue.h"
+#include "disjoint_set.h"
+#include "pair.h"
 
 // graph.h
 //
 // Class: Graph
+// Algorithm: Minimal Spanning Tree: Kruskal, Prim
 
 namespace cs221
 {
@@ -41,12 +46,19 @@ namespace cs221
         Graph(int size, const Vertex d[]);
         ~Graph();
 
-        void insert(Vertex x, Vertex y, Edge w = Edge{ });
+        void insert(Vertex x, Vertex y, Edge w);
         void remove(Vertex x, Vertex y);
         bool exist(Vertex x, Vertex y) const;
+        Edge weight(Vertex x, Vertex y) const;
 
         void dfs(Vertex x) const;
         void bfs(Vertex x) const;
+
+        SeqList<Pair<Vertex, Vertex>> kruskal() const;
+        SeqList<Pair<Vertex, Vertex>> prim(Edge no_edge) const;
+
+        SeqList<Vertex> dijkstra(Vertex start, Vertex end, Edge no_edge) const;
+        SeqList<Vertex> negative_dijkstra(Vertex start, Vertex end, Edge no_edge) const;
     };
 
     template <class Vertex, class Edge>
@@ -129,6 +141,17 @@ namespace cs221
     }
 
     template <class Vertex, class Edge>
+    Edge Graph<Vertex, Edge>::weight(Vertex x, Vertex y) const
+    {
+        int u = find(x), v = find(y);
+        EdgeNode *p = adj_list[u].head;
+
+        while (p && p->end != v)
+            p = p->next;
+        return p->weight;
+    }
+
+    template <class Vertex, class Edge>
     void Graph<Vertex, Edge>::dfs(Vertex x) const
     {
         bool *visited = new bool[vertex_num]{ };
@@ -183,14 +206,83 @@ namespace cs221
             
             std::cout << adj_list[current].ver << ' ';
             visited[current] = true;
-            EdgeNode *p = adj_list[current].head;
-            while (p)
-            {
+            for (EdgeNode *p = adj_list[current].head; p; p = p->next)
                 if (!visited[p->end])
                     q.enqueue(p->end);
-                p = p->next;
+        }
+    }
+
+    template <class Vertex, class Edge>
+    SeqList<Pair<Vertex, Vertex>> Graph<Vertex, Edge>::kruskal() const
+    {
+        struct KruskalEdge
+        {
+            int beg, end;
+            Edge weight;
+
+            KruskalEdge(int b = 0, int e = 0, Edge w = Edge{ })
+                : beg{ b }, end{ e }, weight{ w } { }
+            bool operator<(const KruskalEdge &rp) const { return weight < rp.weight; }
+        };
+
+        SeqList<Pair<Vertex, Vertex>> result;
+        PriorityQueue<KruskalEdge> pq;
+        for (int i = 0; i < vertex_num; ++i)
+            for (EdgeNode *p = adj_list[i].head; p; p = p->next)
+                if (i < p->end)
+                    pq.enqueue({ i, p->end, p->weight });
+
+        int edges = 0;
+        DisjointSet ds{ vertex_num };
+        while (edges < vertex_num - 1)
+        {
+            KruskalEdge e = pq.dequeue();
+            int u = ds.find(e.beg), v = ds.find(e.end);
+            if (u != v)
+            {
+                ++edges;
+                ds.join(u, v);
+                result.append({adj_list[e.beg].ver, adj_list[e.end].ver });
             }
         }
+        return result;
+    }
+
+    template <class Vertex, class Edge>
+    SeqList<Pair<Vertex, Vertex>> Graph<Vertex, Edge>::prim(Edge no_edge) const
+    {
+        bool *flag = new bool[vertex_num]{ };
+        Edge *smallest = new Edge[vertex_num]{ };
+        int *start_node = new int[vertex_num]{ };
+        for (int i = 0; i < vertex_num; ++i)
+            smallest[i] = no_edge;
+
+        SeqList<Pair<Vertex, Vertex>> result;
+        int start = 0;
+        for (int i = 1; i < vertex_num; ++i)
+        {
+            for (EdgeNode *p = adj_list[start].head; p; p = p->next)
+                if (!flag[p->end] && smallest[p->end] > p->weight)
+                {
+                    smallest[p->end] = p->weight;
+                    start_node[p->end] = start;
+                }
+            flag[start] = true;
+
+            Edge min = no_edge;
+            for (int j = 0; j < vertex_num; ++j)
+                if (smallest[j] < min)
+                    {
+                        min = smallest[j];
+                        start = j;
+                    }
+            result.append({adj_list[start_node[start]].ver, adj_list[start].ver });
+            smallest[start] = no_edge;
+        }
+        delete[] flag;
+        delete[] start_node;
+        delete[] smallest;
+        return result;
     }
 
 } // namespace cs221

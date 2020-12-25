@@ -27,18 +27,13 @@ void DisjointSetHeight::join(int root1, int root2)
 
     if (parent[root1] > parent[root2])
     {
-        parent[root2] = min(parent[root2], parent[root1]);
+        parent[root2] += parent[root1];
         parent[root1] = root2;
-    }
-    else if (parent[root1] < parent[root2])
-    {
-        parent[root1] = min(parent[root1], parent[root2]);
-        parent[root2] = root1;
     }
     else
     {
-        parent[root2] = min(parent[root2], parent[root1]) - 1;
-        parent[root1] = root2;
+        parent[root1] += parent[root2];
+        parent[root2] = root1;
     }
 }
 

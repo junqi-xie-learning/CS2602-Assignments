@@ -14,7 +14,7 @@ namespace cs221
         Key key;
         Value value;
 
-        Pair(Key k, Value v = Value{ })
+        Pair(Key k = Key{ }, Value v = Value{ })
             : key{ k }, value{ v } { }
         operator Key() const { return key; }
     };

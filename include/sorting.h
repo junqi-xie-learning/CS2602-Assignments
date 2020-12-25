@@ -3,6 +3,10 @@
 
 #include <iostream>
 
+// sorting.h:
+//
+// Algorithm: insertion_sort, shell_sort, selection_sort, heap_sort, bubble_sort, quick_sort, merge_sort
+
 namespace cs221
 {
     template <class T>
