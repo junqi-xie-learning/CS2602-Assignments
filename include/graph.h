@@ -11,6 +11,7 @@
 //
 // Class: Graph
 // Algorithm: Minimal Spanning Tree: Kruskal, Prim
+//            Shortest Path: Dijkstra, NegativeDijkstra
 
 namespace cs221
 {
@@ -242,7 +243,7 @@ namespace cs221
             {
                 ++edges;
                 ds.join(u, v);
-                result.append({adj_list[e.beg].ver, adj_list[e.end].ver });
+                result.append({ adj_list[e.beg].ver, adj_list[e.end].ver });
             }
         }
         return result;
@@ -282,6 +283,84 @@ namespace cs221
         delete[] flag;
         delete[] start_node;
         delete[] smallest;
+        return result;
+    }
+
+    template <class Vertex, class Edge>
+    SeqList<Vertex> Graph<Vertex, Edge>::dijkstra(Vertex start, Vertex end, Edge no_edge) const
+    {
+        Edge *distance = new Edge[vertex_num]{ };
+        int *prev = new int[vertex_num]{ };
+        bool *known = new bool[vertex_num]{ };
+        for (int i = 0; i < vertex_num; ++i)
+            distance[i] = no_edge;
+
+        SeqList<Vertex> result;
+        int u = find(start), v = find(end);
+        distance[u] = 0;
+        prev[u] = u;
+
+        for (int i = 1; i < vertex_num; ++i)
+        {
+            Edge min = no_edge;
+            int closest = 0;
+            for (int j = 0; j < vertex_num; ++j)
+                if (!known[j] && distance[j] < min)
+                {
+                    min = distance[j];
+                    closest = j;
+                }
+            
+            known[closest] = true;
+            for (EdgeNode *p = adj_list[closest].head; p; p = p->next)
+                if (!known[p->end] && distance[p->end] > min + p->weight)
+                {
+                    distance[p->end] = min + p->weight;
+                    prev[p->end] = closest;
+                }
+        }
+
+        while (u != v)
+        {
+            result.insert(0, adj_list[v].ver);
+            v = prev[v];
+        }
+        result.insert(0, adj_list[u].ver);
+        return result;
+    }
+
+    template <class Vertex, class Edge>
+    SeqList<Vertex> Graph<Vertex, Edge>::negative_dijkstra(Vertex start, Vertex end, Edge no_edge) const
+    {
+        LinkQueue<int> q;
+        Edge *distance = new Edge[vertex_num]{ };
+        int *prev = new int[vertex_num]{ };
+        for (int i = 0; i < vertex_num; ++i)
+            distance[i] = no_edge;
+
+        SeqList<Vertex> result;
+        int u = find(start), v = find(end);
+        distance[u] = 0;
+        prev[u] = u;
+        q.enqueue(u);
+
+        while (!q.is_empty()) {
+            int current = q.dequeue();
+            for (typename Graph<Vertex, Edge>::EdgeNode *p = adj_list[current].head; p; p = p->next)
+                if (distance[current] + p->weight < distance[p->end])
+                {
+                    distance[p->end] = distance[current] + p->weight;
+                    prev[p->end] = current;
+                    q.enqueue(p->end);
+                }
+        }
+
+        while (u != v)
+        {
+            result.insert(0, adj_list[v].ver);
+            v = prev[v];
+        }
+        result.insert(0, adj_list[u].ver);
         return result;
     }
 
